@@ -7,4 +7,8 @@ public interface IWalletService {
 
     WalletServiceRespBean credit(WalletServiceReqBean wsReqBean, String idempotencyKey) throws RuntimeException;
 
+    WalletServiceRespBean debit(WalletServiceReqBean wsReqBean, String idempotencyKey) throws RuntimeException;
+
+    WalletServiceRespBean transfer(WalletServiceReqBean wsReqBean, String idempotencyKey) throws RuntimeException;
+
 }

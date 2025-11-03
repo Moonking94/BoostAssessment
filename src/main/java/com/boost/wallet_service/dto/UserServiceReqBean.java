@@ -9,14 +9,10 @@ import java.math.BigDecimal;
 @Getter
 @Setter
 @NoArgsConstructor
-public class WalletServiceReqBean extends CommonBean {
+public class UserServiceReqBean {
 
-    private String type;
-    private BigDecimal amount;
-    private String user;
+    private String name;
     private String email;
-    private String recepient;
-
-    private String destinationEmail;
+    private BigDecimal balance;
 
 }

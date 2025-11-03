@@ -18,4 +18,7 @@ public class Constants {
     public static final String ENDPOINT_WALLET_DEBIT = "wallet/debit";
     public static final String ENDPOINT_WALLET_TRANSFER = "wallet/transfer";
 
+    public static final String ENDPOINT_USER_CREATE = "user/create";
+
+
 }

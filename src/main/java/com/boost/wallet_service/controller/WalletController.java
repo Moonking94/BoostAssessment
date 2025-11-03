@@ -20,11 +20,11 @@ import org.springframework.web.context.WebApplicationContext;
 
 import java.util.UUID;
 
-import static com.boost.wallet_service.constant.Constants.ENDPOINT_WALLET_CREDIT;
+import static com.boost.wallet_service.constant.Constants.*;
 
 @RestController
 @Scope(value = WebApplicationContext.SCOPE_REQUEST, proxyMode = ScopedProxyMode.TARGET_CLASS)
-@RequestMapping("/api/walletController")
+@RequestMapping("api/walletController")
 public class WalletController {
 
     private Logger log = LoggerFactory.getLogger(WalletController.class);
@@ -35,7 +35,7 @@ public class WalletController {
 
     public WalletController() {}
 
-    @PostMapping(value = "/wallet/credit", headers = "accept=application/json")
+    @PostMapping(value = "credit", headers = "accept=application/json")
     @Idempotent(endpoint = ENDPOINT_WALLET_CREDIT)
     public ResponseEntity<?> credit(@RequestBody WalletServiceReqBean wsReqBean, @RequestHeader("Idempotency-Key") String idempotencyKey
             , HttpServletRequest servletRequest, HttpServletResponse servletResponse) {
@@ -46,6 +46,48 @@ public class WalletController {
             log.info((servletRequest.getServletPath() + " : [ID]").replace("ID", uuid.toString()) + " | " + Constants.FLAG_REQUEST.replace("[string]", gson.toJson(wsReqBean)));
 
             wsRespBean = service.credit(wsReqBean, idempotencyKey);
+
+            log.info((servletRequest.getServletPath() + " : [ID]").replace("ID", uuid.toString()) + " | " + Constants.FLAG_RESPONSE.replace("[string]", gson.toJson(wsRespBean)));
+        } catch (Exception e) {
+            wsRespBean = new WalletServiceRespBean();
+            wsRespBean.setErrorMsg(e.getMessage());
+        }
+
+        return new ResponseEntity<WalletServiceRespBean>(wsRespBean, null, HttpStatus.OK);
+    }
+
+    @PostMapping(value = "debit", headers = "accept=application/json")
+    @Idempotent(endpoint = ENDPOINT_WALLET_DEBIT)
+    public ResponseEntity<?> debit(@RequestBody WalletServiceReqBean wsReqBean, @RequestHeader("Idempotency-Key") String idempotencyKey
+            , HttpServletRequest servletRequest, HttpServletResponse servletResponse) {
+
+        UUID uuid = UUID.randomUUID();
+        WalletServiceRespBean wsRespBean;
+        try {
+            log.info((servletRequest.getServletPath() + " : [ID]").replace("ID", uuid.toString()) + " | " + Constants.FLAG_REQUEST.replace("[string]", gson.toJson(wsReqBean)));
+
+            wsRespBean = service.debit(wsReqBean, idempotencyKey);
+
+            log.info((servletRequest.getServletPath() + " : [ID]").replace("ID", uuid.toString()) + " | " + Constants.FLAG_RESPONSE.replace("[string]", gson.toJson(wsRespBean)));
+        } catch (Exception e) {
+            wsRespBean = new WalletServiceRespBean();
+            wsRespBean.setErrorMsg(e.getMessage());
+        }
+
+        return new ResponseEntity<WalletServiceRespBean>(wsRespBean, null, HttpStatus.OK);
+    }
+
+    @PostMapping(value = "transfer", headers = "accept=application/json")
+    @Idempotent(endpoint = ENDPOINT_WALLET_TRANSFER)
+    public ResponseEntity<?> transfer(@RequestBody WalletServiceReqBean wsReqBean, @RequestHeader("Idempotency-Key") String idempotencyKey
+            , HttpServletRequest servletRequest, HttpServletResponse servletResponse) {
+
+        UUID uuid = UUID.randomUUID();
+        WalletServiceRespBean wsRespBean;
+        try {
+            log.info((servletRequest.getServletPath() + " : [ID]").replace("ID", uuid.toString()) + " | " + Constants.FLAG_REQUEST.replace("[string]", gson.toJson(wsReqBean)));
+
+            wsRespBean = service.transfer(wsReqBean, idempotencyKey);
 
             log.info((servletRequest.getServletPath() + " : [ID]").replace("ID", uuid.toString()) + " | " + Constants.FLAG_RESPONSE.replace("[string]", gson.toJson(wsRespBean)));
         } catch (Exception e) {
