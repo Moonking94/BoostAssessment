@@ -9,6 +9,7 @@ This is a Digital Wallet Microservice built with **Spring Boot 3.3.9** and **Jav
 - Payment (debit)
 - Fund transfer
 - Transaction history retrieval
+- Balance retrieval
 
 The service ensures:
 - 📄 **Swagger UI** for easy API testing
@@ -20,7 +21,6 @@ The service ensures:
 
 - ✅ RESTful endpoints with validation
 - ✅ Thread-safe wallet operations
-- ✅ Custom AOP for idempotency
 - ✅ JPA with PostgreSQL + schema creation scripts
 - ✅ Swagger-based API docs (`springdoc-openapi`)
 - ✅ Clean architecture using DAO/Service layers
@@ -28,31 +28,70 @@ The service ensures:
 ---
 
 ## 🗂 Project Structure
+
+```
 wallet-service/
 ├── src/
-│ ├── main/
-│ │ ├── java/
-│ │ │ └── com.boost.wallet_service/
-│ │ │ ├── annotation/
-│ │ │ ├── aspect/
-│ │ │ ├── config/
-│ │ │ ├── controller/
-│ │ │ ├── dao/
-│ │ │ ├── dto/
-│ │ │ ├── enums/
-│ │ │ ├── interceptor/
-│ │ │ ├── model/
-│ │ │ └── service/
-│ │ └── resources/
-│ │ ├── application.properties
-│ │ └── sql/
-│ │ ├── 01_main.sql
-│ │ ├── 02_schemas.sql
-│ │ ├── 03_wallet.sql
-│ │ ├── user.sql
-│ │ ├── transactions.sql
-│ │ └── idempotency_records.sql
-└── build.gradle
+│   └── main/
+│      ├── java/
+│      │   └── com.boost.wallet_service/
+│      │       ├── annotation/
+│      │       ├── aspect/
+│      │       ├── config/
+│      │       ├── controller/
+│      │       ├── dao/
+│      │       ├── dto/
+│      │       ├── enums/
+│      │       ├── interceptor/
+│      │       ├── model/
+│      │       └── service/
+│      │
+│      └── resources/
+│          └── application.properties         
+│
+├── build.gradle
+│
+└── sql/
+    └── wallet.sql
+```
+
+---
+
+## 🗃️ Database Schema
+
+### 📂 Schema: `wallet`
+
+#### 🧑‍💼 Table: `users`
+
+| Column      | Type        | Description               |
+|-------------|-------------|---------------------------|
+| row_id      | UUID (PK)   | Unique ID                 |
+| name        | VARCHAR     | User's name               |
+| email       | VARCHAR     | Unique email              |
+| balance     | NUMERIC     | Wallet balance            |
+| version     | BIGINT      | For optimistic locking    |
+
+#### 🔁 Table: `transactions`
+
+| Column           | Type        | Description                       |
+|------------------|-------------|-----------------------------------|
+| row_id           | UUID (PK)   | Transaction ID                    |
+| transaction_type | VARCHAR     | CREDIT, DEBIT, TRANSFER           |
+| amount           | NUMERIC     | Transaction amount                |
+| source_user_id   | UUID (FK)   | Source user                       |
+| destination_user_id | UUID (FK)| Destination user (nullable)       |
+| transaction_date | TIMESTAMP   | Date/time of transaction          |
+| version          | BIGINT      | For optimistic locking            |
+
+#### 🧾 Table: `idempotency_records`
+
+| Column            | Type        | Description                     |
+|-------------------|-------------|---------------------------------|
+| row_id            | UUID (PK)   | Record ID                       |
+| idempotency_key   | VARCHAR     | Unique request ID               |
+| endpoint          | VARCHAR     | API endpoint name               |
+| created_timestamp | TIMESTAMP   | Request timestamp               |
+| response_payload  | TEXT        | Cached JSON response            |
 
 ---
 
@@ -71,15 +110,15 @@ wallet-service/
 
 ### 1. Create a PostgreSQL database
 
-```bash
-CREATE DATABASE boost_wallet;
+```
+CREATE DATABASE <your_database>;
 ```
 
 ### 2. Run the SQL scripts
 
 Navigate to the `sql/` folder in your terminal:
 
-```bash
+```
 cd sql/
 psql -U <your_user> -d <your_database> -f wallet.sql
 ```
@@ -98,12 +137,11 @@ This script will:
 Update your `application.properties` file:
 
 ```properties
-spring.datasource.url=jdbc:postgresql://localhost:5432/boost_wallet
+spring.datasource.url=jdbc:postgresql://localhost:5432/<your_database>
 spring.datasource.username=your_db_username
 spring.datasource.password=your_db_password
 spring.jpa.hibernate.ddl-auto=none
 spring.jpa.properties.hibernate.default_schema=wallet
-server.port=8080
 ```
 
 ---
@@ -143,6 +181,7 @@ Idempotency-Key: <any-unique-string>
 ## 📤 API Examples
 
 ### ➕ Create User
+To create user
 
 ```http
 POST /api/userController/create
@@ -165,6 +204,7 @@ response
 ```
 
 ### ➕ Update User
+Allows the user to update their information such as their name.
 
 ```http
 POST /api/userController/update
@@ -186,6 +226,7 @@ response
 ```
 
 ### ➕ Credit Wallet
+An API that will add money from user's account.
 
 ```http
 POST /api/walletController/credit
@@ -206,6 +247,7 @@ response
 ```
 
 ### ➕ Debit Wallet
+An API that will deduct money from user's account.
 
 ```http
 POST /api/walletController/debit
@@ -226,6 +268,8 @@ response
 ```
 
 ### ➕ Transfer Wallet
+Allows the user to transfer their 'x' amount of money to another user.
+There will be validation checking to see if both user exists and to see if the user doing the transfer has the amount to transfer available. 
 
 ```http
 POST /api/walletController/transfer
@@ -233,7 +277,7 @@ Header: Idempotency-Key: transfer-001
 
 request
 {
-    "email": "farid.nazmi@gmail.com",
+    "email": "zaid.haritsah@gmail.com",
     "destinationEmail": "imran.abdulhadi@gmail.com",
     "amount": 5000
 }
@@ -247,6 +291,7 @@ response
 ```
 
 ### ➕ Get Wallet Transaction History
+To get the user transaction history by using their email.
 
 ```http
 POST /api/walletController/getTransactionHistory
@@ -264,7 +309,7 @@ response
             "transactionId": "db5a1c07-b4e9-444c-95a3-3e6c1f91b26b",
             "transactionType": "TRANSFER",
             "amount": 5000.00,
-            "fromEmail": "farid.nazmi@gmail.com",
+            "fromEmail": "zaid.haritsah@gmail.com",
             "toEmail": "imran.abdulhadi@gmail.com",
             "timestamp": "2025-11-04T23:41:08.335865"
         },
@@ -273,7 +318,7 @@ response
             "transactionType": "TRANSFER",
             "amount": 500.00,
             "fromEmail": "imran.abdulhadi@gmail.com",
-            "toEmail": "farid.nazmi@gmail.com",
+            "toEmail": "zaid.haritsah@gmail.com",
             "timestamp": "2025-11-04T22:55:42.432086"
         },
         {
