@@ -4,15 +4,15 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.math.BigDecimal;
+import java.util.List;
 
 @Getter
 @Setter
 @NoArgsConstructor
-public class WalletServiceRespBean {
+public class TransactionRespBean {
+    private List<TransactionBean> transactions;
+    private int total;
 
-    private String status;
-    private BigDecimal balance;
     private String errorMsg;
 
 }

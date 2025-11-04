@@ -1,8 +1,8 @@
 package com.boost.wallet_service.util;
 
+import com.boost.wallet_service.config.LocalDateTimeTypeAdapter;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.maybank.assessment.config.LocalDateTimeTypeAdapter;
 
 import java.time.LocalDateTime;
 

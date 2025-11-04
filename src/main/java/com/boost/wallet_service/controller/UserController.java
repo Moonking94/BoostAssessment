@@ -2,8 +2,8 @@ package com.boost.wallet_service.controller;
 
 import com.boost.wallet_service.annotation.Idempotent;
 import com.boost.wallet_service.constant.Constants;
-import com.boost.wallet_service.dto.UserServiceReqBean;
-import com.boost.wallet_service.dto.UserServiceRespBean;
+import com.boost.wallet_service.dto.UserReqBean;
+import com.boost.wallet_service.dto.UserRespBean;
 import com.boost.wallet_service.service.user.IUserService;
 import com.google.gson.Gson;
 import jakarta.servlet.http.HttpServletRequest;
@@ -20,7 +20,7 @@ import org.springframework.web.context.WebApplicationContext;
 
 import java.util.UUID;
 
-import static com.boost.wallet_service.constant.Constants.ENDPOINT_USER_CREATE;
+import static com.boost.wallet_service.constant.Constants.*;
 
 @RestController
 @Scope(value = WebApplicationContext.SCOPE_REQUEST, proxyMode = ScopedProxyMode.TARGET_CLASS)
@@ -37,11 +37,11 @@ public class UserController {
 
     @PostMapping(value = "create", headers = "accept=application/json")
     @Idempotent(endpoint = ENDPOINT_USER_CREATE)
-    public ResponseEntity<?> create(@RequestBody UserServiceReqBean wsReqBean, @RequestHeader("Idempotency-Key") String idempotencyKey
+    public ResponseEntity<?> create(@RequestBody UserReqBean wsReqBean, @RequestHeader("Idempotency-Key") String idempotencyKey
             , HttpServletRequest servletRequest, HttpServletResponse servletResponse) {
 
         UUID uuid = UUID.randomUUID();
-        UserServiceRespBean wsRespBean;
+        UserRespBean wsRespBean;
         try {
             log.info((servletRequest.getServletPath() + " : [ID]").replace("ID", uuid.toString()) + " | " + Constants.FLAG_REQUEST.replace("[string]", gson.toJson(wsReqBean)));
 
@@ -49,10 +49,52 @@ public class UserController {
 
             log.info((servletRequest.getServletPath() + " : [ID]").replace("ID", uuid.toString()) + " | " + Constants.FLAG_RESPONSE.replace("[string]", gson.toJson(wsRespBean)));
         } catch (Exception e) {
-            wsRespBean = new UserServiceRespBean();
+            wsRespBean = new UserRespBean();
             wsRespBean.setErrorMsg(e.getMessage());
         }
 
-        return new ResponseEntity<UserServiceRespBean>(wsRespBean, null, HttpStatus.OK);
+        return new ResponseEntity<UserRespBean>(wsRespBean, null, HttpStatus.OK);
+    }
+
+    @PostMapping(value = "update", headers = "accept=application/json")
+    @Idempotent(endpoint = ENDPOINT_USER_UPDATE)
+    public ResponseEntity<?> update(@RequestBody UserReqBean wsReqBean, @RequestHeader("Idempotency-Key") String idempotencyKey
+            , HttpServletRequest servletRequest, HttpServletResponse servletResponse) {
+
+        UUID uuid = UUID.randomUUID();
+        UserRespBean wsRespBean;
+        try {
+            log.info((servletRequest.getServletPath() + " : [ID]").replace("ID", uuid.toString()) + " | " + Constants.FLAG_REQUEST.replace("[string]", gson.toJson(wsReqBean)));
+
+            wsRespBean = service.update(wsReqBean, idempotencyKey);
+
+            log.info((servletRequest.getServletPath() + " : [ID]").replace("ID", uuid.toString()) + " | " + Constants.FLAG_RESPONSE.replace("[string]", gson.toJson(wsRespBean)));
+        } catch (Exception e) {
+            wsRespBean = new UserRespBean();
+            wsRespBean.setErrorMsg(e.getMessage());
+        }
+
+        return new ResponseEntity<UserRespBean>(wsRespBean, null, HttpStatus.OK);
+    }
+
+    @PostMapping(value = "retrieve", headers = "accept=application/json")
+    @Idempotent(endpoint = ENDPOINT_USER_RETRIEVE)
+    public ResponseEntity<?> retrieve(@RequestBody UserReqBean wsReqBean, @RequestHeader("Idempotency-Key") String idempotencyKey
+            , HttpServletRequest servletRequest, HttpServletResponse servletResponse) {
+
+        UUID uuid = UUID.randomUUID();
+        UserRespBean wsRespBean;
+        try {
+            log.info((servletRequest.getServletPath() + " : [ID]").replace("ID", uuid.toString()) + " | " + Constants.FLAG_REQUEST.replace("[string]", gson.toJson(wsReqBean)));
+
+            wsRespBean = service.retrieve(wsReqBean, idempotencyKey);
+
+            log.info((servletRequest.getServletPath() + " : [ID]").replace("ID", uuid.toString()) + " | " + Constants.FLAG_RESPONSE.replace("[string]", gson.toJson(wsRespBean)));
+        } catch (Exception e) {
+            wsRespBean = new UserRespBean();
+            wsRespBean.setErrorMsg(e.getMessage());
+        }
+
+        return new ResponseEntity<UserRespBean>(wsRespBean, null, HttpStatus.OK);
     }
 }

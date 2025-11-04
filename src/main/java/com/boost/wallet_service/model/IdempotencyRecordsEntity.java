@@ -30,8 +30,7 @@ public class IdempotencyRecordsEntity implements Serializable {
     @Column(name = "created_timestamp", nullable = false)
     private LocalDateTime createdTimestamp;
 
-    @Lob
-    @Column(name = "response_payload", nullable = false)
+    @Column(name = "response_payload", columnDefinition = "TEXT")
     private String responsePayload;
 
 }

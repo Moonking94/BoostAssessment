@@ -1,14 +1,14 @@
 package com.boost.wallet_service.service.wallet;
 
-import com.boost.wallet_service.dto.WalletServiceReqBean;
-import com.boost.wallet_service.dto.WalletServiceRespBean;
+import com.boost.wallet_service.dto.WalletReqBean;
+import com.boost.wallet_service.dto.WalletRespBean;
 
 public interface IWalletService {
 
-    WalletServiceRespBean credit(WalletServiceReqBean wsReqBean, String idempotencyKey) throws RuntimeException;
+    WalletRespBean credit(WalletReqBean wsReqBean, String idempotencyKey) throws RuntimeException;
 
-    WalletServiceRespBean debit(WalletServiceReqBean wsReqBean, String idempotencyKey) throws RuntimeException;
+    WalletRespBean debit(WalletReqBean wsReqBean, String idempotencyKey) throws RuntimeException;
 
-    WalletServiceRespBean transfer(WalletServiceReqBean wsReqBean, String idempotencyKey) throws RuntimeException;
+    WalletRespBean transfer(WalletReqBean wsReqBean, String idempotencyKey) throws RuntimeException;
 
 }

@@ -30,7 +30,7 @@ public class UsersEntity implements Serializable {
     private String email;
 
     @Column(name = "balance", nullable = false)
-    private BigDecimal balance = BigDecimal.ZERO;
+    private BigDecimal balance;
 
     @Version
     @Column(name = "version")

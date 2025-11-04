@@ -40,8 +40,8 @@ public class TransactionsEntity implements Serializable {
     @JoinColumn(name = "destination_user_id")
     private UsersEntity destinationUser;
 
-    @Column(name = "trasaction_date", nullable = false)
-    private LocalDateTime transactionDate = LocalDateTime.now();
+    @Column(name = "transaction_date", nullable = false)
+    private LocalDateTime transactionDate;
 
     @Version
     @Column(name = "version")

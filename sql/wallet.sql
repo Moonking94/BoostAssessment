@@ -28,10 +28,10 @@ CREATE TABLE IF NOT EXISTS wallet.transactions (
 );
 
 -- IDEMPOTENCY RECORD TABLE
-CREATE TABLE IF NOT EXISTS wallet.idempotency_record (
+CREATE TABLE IF NOT EXISTS wallet.idempotency_records (
     row_id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     idempotency_key VARCHAR(255) NOT NULL UNIQUE,
     endpoint VARCHAR(255) NOT NULL,
     created_timestamp TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    response_payload TEXT NOT NULL
+    response_payload TEXT
 );

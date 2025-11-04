@@ -4,11 +4,14 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.math.BigDecimal;
+
 @Getter
 @Setter
 @NoArgsConstructor
-public class CommonBean {
+public class UserReqBean extends CommonBean {
 
-    private String email;
+    private String name;
+    private BigDecimal balance;
 
 }

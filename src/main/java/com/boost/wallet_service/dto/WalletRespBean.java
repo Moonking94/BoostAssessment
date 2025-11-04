@@ -9,10 +9,9 @@ import java.math.BigDecimal;
 @Getter
 @Setter
 @NoArgsConstructor
-public class UserServiceRespBean {
+public class WalletRespBean {
 
-    private String name;
-    private String email;
+    private String status;
     private BigDecimal balance;
     private String errorMsg;
 

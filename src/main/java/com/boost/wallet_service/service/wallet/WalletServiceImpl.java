@@ -2,8 +2,8 @@ package com.boost.wallet_service.service.wallet;
 
 import com.boost.wallet_service.constant.Constants;
 import com.boost.wallet_service.dto.TransactionTypeEnum;
-import com.boost.wallet_service.dto.WalletServiceReqBean;
-import com.boost.wallet_service.dto.WalletServiceRespBean;
+import com.boost.wallet_service.dto.WalletReqBean;
+import com.boost.wallet_service.dto.WalletRespBean;
 import com.boost.wallet_service.model.IdempotencyRecordsEntity;
 import com.boost.wallet_service.model.TransactionsEntity;
 import com.boost.wallet_service.model.UsersEntity;
@@ -12,7 +12,6 @@ import com.boost.wallet_service.repository.transactions.TransactionsDao;
 import com.boost.wallet_service.repository.users.UsersDao;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.sun.jdi.request.DuplicateRequestException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
@@ -37,7 +36,7 @@ public class WalletServiceImpl implements IWalletService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public WalletServiceRespBean credit(WalletServiceReqBean wsReqBean, String idempotencyKey) throws RuntimeException {
+    public WalletRespBean credit(WalletReqBean wsReqBean, String idempotencyKey) throws RuntimeException {
         try {
             String endpoint = ENDPOINT_WALLET_CREDIT;
 
@@ -56,7 +55,7 @@ public class WalletServiceImpl implements IWalletService {
                         .findByIdempotencyKeyAndEndpoint(idempotencyKey, endpoint)
                         .map(r -> {
                             try {
-                                return objectMapper.readValue(r.getResponsePayload(), WalletServiceRespBean.class);
+                                return objectMapper.readValue(r.getResponsePayload(), WalletRespBean.class);
                             } catch (JsonProcessingException ex) {
                                 throw new RuntimeException("Failed to parse cached response", ex);
                             }
@@ -82,9 +81,9 @@ public class WalletServiceImpl implements IWalletService {
             transactionsDao.saveAndFlush(tx);
 
             // 5. Prepare response
-            WalletServiceRespBean wsRespBean = new WalletServiceRespBean();
+            WalletRespBean wsRespBean = new WalletRespBean();
             wsRespBean.setBalance(user.getBalance());
-            wsRespBean.setStatus(messageSource.getMessage(Constants.RESPONSE_CODE_SUCCESS, null, LocaleContextHolder.getLocale()));
+            wsRespBean.setStatus(messageSource.getMessage(RESPONSE_CODE_SUCCESS, null, LocaleContextHolder.getLocale()));
 
             // 6. Store response payload in idempotency record
             try {
@@ -102,7 +101,7 @@ public class WalletServiceImpl implements IWalletService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public WalletServiceRespBean debit(WalletServiceReqBean wsReqBean, String idempotencyKey) throws RuntimeException {
+    public WalletRespBean debit(WalletReqBean wsReqBean, String idempotencyKey) throws RuntimeException {
         try {
             String endpoint = ENDPOINT_WALLET_DEBIT;
 
@@ -121,7 +120,7 @@ public class WalletServiceImpl implements IWalletService {
                         .findByIdempotencyKeyAndEndpoint(idempotencyKey, endpoint)
                         .map(r -> {
                             try {
-                                return objectMapper.readValue(r.getResponsePayload(), WalletServiceRespBean.class);
+                                return objectMapper.readValue(r.getResponsePayload(), WalletRespBean.class);
                             } catch (JsonProcessingException ex) {
                                 throw new RuntimeException("Failed to parse cached response", ex);
                             }
@@ -152,7 +151,7 @@ public class WalletServiceImpl implements IWalletService {
             transactionsDao.saveAndFlush(tx);
 
             // 6. Prepare response
-            WalletServiceRespBean wsRespBean = new WalletServiceRespBean();
+            WalletRespBean wsRespBean = new WalletRespBean();
             wsRespBean.setBalance(user.getBalance());
             wsRespBean.setStatus(messageSource.getMessage(Constants.RESPONSE_CODE_SUCCESS, null, LocaleContextHolder.getLocale()));
 
@@ -170,7 +169,7 @@ public class WalletServiceImpl implements IWalletService {
         }
     }
 
-    public WalletServiceRespBean transfer(WalletServiceReqBean wsReqBean, String idempotencyKey) throws RuntimeException {
+    public WalletRespBean transfer(WalletReqBean wsReqBean, String idempotencyKey) throws RuntimeException {
         try {
             String endpoint = ENDPOINT_WALLET_TRANSFER;
 
@@ -189,7 +188,7 @@ public class WalletServiceImpl implements IWalletService {
                         .findByIdempotencyKeyAndEndpoint(idempotencyKey, endpoint)
                         .map(r -> {
                             try {
-                                return objectMapper.readValue(r.getResponsePayload(), WalletServiceRespBean.class);
+                                return objectMapper.readValue(r.getResponsePayload(), WalletRespBean.class);
                             } catch (JsonProcessingException ex) {
                                 throw new RuntimeException("Failed to parse cached response", ex);
                             }
@@ -232,7 +231,7 @@ public class WalletServiceImpl implements IWalletService {
             transactionsDao.saveAndFlush(tx);
 
             // 6. Prepare response
-            WalletServiceRespBean wsRespBean = new WalletServiceRespBean();
+            WalletRespBean wsRespBean = new WalletRespBean();
             wsRespBean.setBalance(sourceUser.getBalance());
             wsRespBean.setStatus(messageSource.getMessage(Constants.RESPONSE_CODE_SUCCESS, null, LocaleContextHolder.getLocale()));
 

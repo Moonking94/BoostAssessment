@@ -2,8 +2,8 @@ package com.boost.wallet_service.controller;
 
 import com.boost.wallet_service.annotation.Idempotent;
 import com.boost.wallet_service.constant.Constants;
-import com.boost.wallet_service.dto.WalletServiceReqBean;
-import com.boost.wallet_service.dto.WalletServiceRespBean;
+import com.boost.wallet_service.dto.WalletReqBean;
+import com.boost.wallet_service.dto.WalletRespBean;
 import com.boost.wallet_service.service.wallet.IWalletService;
 import com.google.gson.Gson;
 import jakarta.servlet.http.HttpServletRequest;
@@ -37,11 +37,11 @@ public class WalletController {
 
     @PostMapping(value = "credit", headers = "accept=application/json")
     @Idempotent(endpoint = ENDPOINT_WALLET_CREDIT)
-    public ResponseEntity<?> credit(@RequestBody WalletServiceReqBean wsReqBean, @RequestHeader("Idempotency-Key") String idempotencyKey
+    public ResponseEntity<?> credit(@RequestBody WalletReqBean wsReqBean, @RequestHeader("Idempotency-Key") String idempotencyKey
             , HttpServletRequest servletRequest, HttpServletResponse servletResponse) {
 
         UUID uuid = UUID.randomUUID();
-        WalletServiceRespBean wsRespBean;
+        WalletRespBean wsRespBean;
         try {
             log.info((servletRequest.getServletPath() + " : [ID]").replace("ID", uuid.toString()) + " | " + Constants.FLAG_REQUEST.replace("[string]", gson.toJson(wsReqBean)));
 
@@ -49,20 +49,20 @@ public class WalletController {
 
             log.info((servletRequest.getServletPath() + " : [ID]").replace("ID", uuid.toString()) + " | " + Constants.FLAG_RESPONSE.replace("[string]", gson.toJson(wsRespBean)));
         } catch (Exception e) {
-            wsRespBean = new WalletServiceRespBean();
+            wsRespBean = new WalletRespBean();
             wsRespBean.setErrorMsg(e.getMessage());
         }
 
-        return new ResponseEntity<WalletServiceRespBean>(wsRespBean, null, HttpStatus.OK);
+        return new ResponseEntity<WalletRespBean>(wsRespBean, null, HttpStatus.OK);
     }
 
     @PostMapping(value = "debit", headers = "accept=application/json")
     @Idempotent(endpoint = ENDPOINT_WALLET_DEBIT)
-    public ResponseEntity<?> debit(@RequestBody WalletServiceReqBean wsReqBean, @RequestHeader("Idempotency-Key") String idempotencyKey
+    public ResponseEntity<?> debit(@RequestBody WalletReqBean wsReqBean, @RequestHeader("Idempotency-Key") String idempotencyKey
             , HttpServletRequest servletRequest, HttpServletResponse servletResponse) {
 
         UUID uuid = UUID.randomUUID();
-        WalletServiceRespBean wsRespBean;
+        WalletRespBean wsRespBean;
         try {
             log.info((servletRequest.getServletPath() + " : [ID]").replace("ID", uuid.toString()) + " | " + Constants.FLAG_REQUEST.replace("[string]", gson.toJson(wsReqBean)));
 
@@ -70,20 +70,20 @@ public class WalletController {
 
             log.info((servletRequest.getServletPath() + " : [ID]").replace("ID", uuid.toString()) + " | " + Constants.FLAG_RESPONSE.replace("[string]", gson.toJson(wsRespBean)));
         } catch (Exception e) {
-            wsRespBean = new WalletServiceRespBean();
+            wsRespBean = new WalletRespBean();
             wsRespBean.setErrorMsg(e.getMessage());
         }
 
-        return new ResponseEntity<WalletServiceRespBean>(wsRespBean, null, HttpStatus.OK);
+        return new ResponseEntity<WalletRespBean>(wsRespBean, null, HttpStatus.OK);
     }
 
     @PostMapping(value = "transfer", headers = "accept=application/json")
     @Idempotent(endpoint = ENDPOINT_WALLET_TRANSFER)
-    public ResponseEntity<?> transfer(@RequestBody WalletServiceReqBean wsReqBean, @RequestHeader("Idempotency-Key") String idempotencyKey
+    public ResponseEntity<?> transfer(@RequestBody WalletReqBean wsReqBean, @RequestHeader("Idempotency-Key") String idempotencyKey
             , HttpServletRequest servletRequest, HttpServletResponse servletResponse) {
 
         UUID uuid = UUID.randomUUID();
-        WalletServiceRespBean wsRespBean;
+        WalletRespBean wsRespBean;
         try {
             log.info((servletRequest.getServletPath() + " : [ID]").replace("ID", uuid.toString()) + " | " + Constants.FLAG_REQUEST.replace("[string]", gson.toJson(wsReqBean)));
 
@@ -91,11 +91,11 @@ public class WalletController {
 
             log.info((servletRequest.getServletPath() + " : [ID]").replace("ID", uuid.toString()) + " | " + Constants.FLAG_RESPONSE.replace("[string]", gson.toJson(wsRespBean)));
         } catch (Exception e) {
-            wsRespBean = new WalletServiceRespBean();
+            wsRespBean = new WalletRespBean();
             wsRespBean.setErrorMsg(e.getMessage());
         }
 
-        return new ResponseEntity<WalletServiceRespBean>(wsRespBean, null, HttpStatus.OK);
+        return new ResponseEntity<WalletRespBean>(wsRespBean, null, HttpStatus.OK);
     }
 
 }

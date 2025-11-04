@@ -1,10 +1,14 @@
 package com.boost.wallet_service.service.user;
 
-import com.boost.wallet_service.dto.UserServiceReqBean;
-import com.boost.wallet_service.dto.UserServiceRespBean;
+import com.boost.wallet_service.dto.UserReqBean;
+import com.boost.wallet_service.dto.UserRespBean;
 
 public interface IUserService {
 
-    UserServiceRespBean create(UserServiceReqBean wsReqBean, String idempotencyKey) throws RuntimeException;
+    UserRespBean create(UserReqBean wsReqBean, String idempotencyKey) throws RuntimeException;
+
+    UserRespBean update(UserReqBean wsReqBean, String idempotencyKey) throws RuntimeException;
+
+    UserRespBean retrieve(UserReqBean wsReqBean, String idempotencyKey) throws RuntimeException;
 
 }
